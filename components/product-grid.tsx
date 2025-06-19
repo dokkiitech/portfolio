@@ -1,44 +1,8 @@
-import { ProductCard } from "@/components/product-card"
-
-interface Product {
-  id: string
-  product_title: string
-  sub_title: string
-  picture: {
-    url: string
-  }
-  technology: string[]
-}
-
-async function getAllProducts(): Promise<Product[]> {
-  try {
-    const response = await fetch("https://dokkiitech.microcms.io/api/v1/product", {
-      headers: {
-        "X-MICROCMS-API-KEY": process.env.MICROCMS_API_KEY || "",
-      },
-      next: { revalidate: 3600 },
-    })
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch products")
-    }
-
-    const data = await response.json()
-    if (Array.isArray(data.contents)) {
-      return data.contents
-    } else if (data && Object.keys(data).length > 0) {
-      return [data]
-    } else {
-      return []
-    }
-  } catch (error) {
-    console.error("Error fetching products:", error)
-    return []
-  }
-}
+import { ProductCard } from "@/components/product-card";
+import { fetchProducts, Product } from "@/lib/microcms";
 
 export async function ProductGrid() {
-  const products = await getAllProducts()
+  const products = await fetchProducts();
 
   if (products.length === 0) {
     return (
