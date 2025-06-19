@@ -42,5 +42,5 @@ jobs:
             pnpm install
             git pull origin main
             pnpm build
-            pm2 restart okusurikanri
+            pm2 restart portfoliosite 
           EOF
