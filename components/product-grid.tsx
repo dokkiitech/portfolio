@@ -24,7 +24,13 @@ async function getAllProducts(): Promise<Product[]> {
     }
 
     const data = await response.json()
-    return data.contents || []
+    if (Array.isArray(data.contents)) {
+      return data.contents
+    } else if (data && Object.keys(data).length > 0) {
+      return [data]
+    } else {
+      return []
+    }
   } catch (error) {
     console.error("Error fetching products:", error)
     return []
