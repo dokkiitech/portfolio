@@ -37,7 +37,7 @@ jobs:
       - name: SSH into server and deploy
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /root/okusuri
+            cd /root/portfollio
             pnpm install
             git pull origin main
             pnpm build
