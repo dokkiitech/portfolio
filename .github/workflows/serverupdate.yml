@@ -24,6 +24,7 @@ jobs:
 
       - name: Install pnpm (safe way)
         run: |
+          export SHELL=/bin/bash
           curl -fsSL https://get.pnpm.io/install.sh | sh -
           echo "$HOME/.local/share/pnpm" >> $GITHUB_PATH
           export PATH="$HOME/.local/share/pnpm:$PATH"
