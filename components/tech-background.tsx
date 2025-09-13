@@ -29,6 +29,7 @@ export function TechBackground({ containerRef }: TechBackgroundProps) {
   const particlesRef = useRef<Particle[]>([])
   const connectionsRef = useRef<Connection[]>([])
   const animationFrameRef = useRef<number>()
+  const resizeTimeoutRef = useRef<NodeJS.Timeout>()
 
   const codeSnippets = [
     'go',
@@ -237,14 +238,43 @@ export function TechBackground({ containerRef }: TechBackgroundProps) {
     animate()
 
     const handleResize = () => {
-      resizeCanvas()
-      initParticles()
+      // デバウンス処理でリサイズイベントを制限
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current)
+      }
+
+      resizeTimeoutRef.current = setTimeout(() => {
+        const container = containerRef?.current
+        if (container) {
+          const rect = container.getBoundingClientRect()
+          const currentWidth = canvas.width
+          const currentHeight = canvas.height
+
+          // サイズが実際に変わった場合のみリサイズ
+          if (Math.abs(currentWidth - rect.width) > 5 || Math.abs(currentHeight - rect.height) > 5) {
+            resizeCanvas()
+            // パーティクルの位置を新しいサイズに調整（再生成はしない）
+            particlesRef.current.forEach(particle => {
+              particle.x = Math.min(particle.x, rect.width)
+              particle.y = Math.min(particle.y, rect.height)
+            })
+          }
+        } else {
+          resizeCanvas()
+          initParticles()
+        }
+      }, 150) // 150ms のデバウンス
     }
 
     window.addEventListener('resize', handleResize)
 
     return () => {
       window.removeEventListener('resize', handleResize)
+
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current)
+      }
+
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
