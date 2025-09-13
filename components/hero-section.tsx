@@ -3,8 +3,10 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState, useRef } from "react"
-import { TechBackground } from "./tech-background"
+import { useEffect, useState, useRef, lazy, Suspense } from "react"
+
+// TechBackgroundを遅延読み込み
+const TechBackground = lazy(() => import("./tech-background").then(m => ({ default: m.TechBackground })))
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false)
@@ -18,8 +20,10 @@ export function HeroSection() {
 
   return (
     <section ref={sectionRef} className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Background Animation */}
-      <TechBackground containerRef={sectionRef} />
+      {/* Background Animation - 遅延読み込み */}
+      <Suspense fallback={<div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-900/10 via-transparent to-purple-900/10" />}>
+        <TechBackground containerRef={sectionRef} />
+      </Suspense>
       <div className="absolute inset-0 -z-5 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
 
       <div className="container mx-auto px-4 text-center relative z-10">
