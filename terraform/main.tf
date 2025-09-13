@@ -17,8 +17,8 @@ resource "null_resource" "deploy" {
     inline = [
       "cd /home/dokkiitech/portfolio", 
       "git fetch origin && git reset --hard origin/main",
-      "/home/linuxbrew/.linuxbrew/bin/npm i",
-      "/home/linuxbrew/.linuxbrew/bin/npm run build",
+      "/home/linuxbrew/.linuxbrew/bin/pnpm i",
+      "/home/linuxbrew/.linuxbrew/bin/pnpm run build",
       "/home/dokkiitech/.nvm/versions/node/v22.16.0/bin/pm2 restart portfoliosite",
       "echo 'Deployment completed successfully!'"
     ]
