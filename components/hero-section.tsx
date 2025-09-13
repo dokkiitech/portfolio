@@ -3,11 +3,12 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { TechBackground } from "./tech-background"
 
 export function HeroSection() {
   const [mounted, setMounted] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -16,12 +17,12 @@ export function HeroSection() {
   if (!mounted) return null
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <section ref={sectionRef} className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Background Animation */}
-      <TechBackground />
+      <TechBackground containerRef={sectionRef} />
       <div className="absolute inset-0 -z-5 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20"></div>
 
-      <div className="container mx-auto px-4 text-center">
+      <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* アイコン */}
           <div className="flex justify-center mb-8">

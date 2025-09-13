@@ -20,7 +20,11 @@ interface Connection {
   opacity: number
 }
 
-export function TechBackground() {
+interface TechBackgroundProps {
+  containerRef?: React.RefObject<HTMLElement>
+}
+
+export function TechBackground({ containerRef }: TechBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
   const connectionsRef = useRef<Connection[]>([])
@@ -81,8 +85,21 @@ export function TechBackground() {
     if (!ctx) return
 
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      const container = containerRef?.current
+      if (container) {
+        const rect = container.getBoundingClientRect()
+        canvas.width = rect.width
+        canvas.height = rect.height
+
+        // Canvasを親コンテナに固定
+        canvas.style.left = '0px'
+        canvas.style.top = '0px'
+        canvas.style.width = rect.width + 'px'
+        canvas.style.height = rect.height + 'px'
+      } else {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+      }
     }
 
     const initParticles = () => {
@@ -238,7 +255,12 @@ export function TechBackground() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full -z-10 opacity-60"
-      style={{ background: 'transparent' }}
+      style={{
+        background: 'transparent',
+        pointerEvents: 'none',
+        position: 'absolute',
+        zIndex: -10
+      }}
     />
   )
 }
