@@ -47,7 +47,7 @@ function parseRSSFeed(xml: string): ZennArticle[] {
 
     if (title && link && pubDate) {
       articles.push({
-        title: decodeHTMLEntities(title),
+        title: stripHTMLTags(decodeHTMLEntities(title)),
         link,
         pubDate,
         description: stripHTMLTags(decodeHTMLEntities(description || '')),
