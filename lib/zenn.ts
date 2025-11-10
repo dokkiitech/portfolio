@@ -79,5 +79,9 @@ function decodeHTMLEntities(text: string): string {
 }
 
 function stripHTMLTags(text: string): string {
-  return text.replace(/<[^>]*>/g, '').trim()
+  // CDATAセクションの内容を抽出
+  let cleaned = text.replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1')
+  // HTMLタグを除去
+  cleaned = cleaned.replace(/<[^>]*>/g, '')
+  return cleaned.trim()
 }
