@@ -50,7 +50,7 @@ function parseRSSFeed(xml: string): ZennArticle[] {
         title: decodeHTMLEntities(title),
         link,
         pubDate,
-        description: decodeHTMLEntities(description || ''),
+        description: stripHTMLTags(decodeHTMLEntities(description || '')),
         thumbnail,
       })
     }
@@ -76,4 +76,8 @@ function decodeHTMLEntities(text: string): string {
   }
 
   return text.replace(/&[^;]+;/g, (entity) => entities[entity] || entity)
+}
+
+function stripHTMLTags(text: string): string {
+  return text.replace(/<[^>]*>/g, '').trim()
 }

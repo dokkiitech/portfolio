@@ -2,7 +2,6 @@ import { HeroSection } from "@/components/hero-section"
 import { Suspense, lazy } from "react"
 
 // 他のコンポーネントを遅延読み込み
-const LatestProducts = lazy(() => import("@/components/latest-products").then(m => ({ default: m.LatestProducts })))
 const CodeAnimation = lazy(() => import("@/components/code-animation").then(m => ({ default: m.CodeAnimation })))
 
 // フォールバック用のローディングコンポーネント
@@ -31,10 +30,6 @@ export default function HomePage() {
       {/* 他のコンポーネントは遅延読み込み */}
       <Suspense fallback={<SectionSkeleton />}>
         <CodeAnimation />
-      </Suspense>
-
-      <Suspense fallback={<SectionSkeleton />}>
-        <LatestProducts />
       </Suspense>
     </main>
   )
