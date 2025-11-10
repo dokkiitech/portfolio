@@ -4,9 +4,10 @@ export interface ZennArticle {
   pubDate: string
   description: string
   thumbnail?: string
+  tags: string[]
 }
 
-export async function getZennArticles(username: string): Promise<ZennArticle[]> {
+export async function getZennArticles(username: string, tag?: string): Promise<ZennArticle[]> {
   try {
     const response = await fetch(`https://zenn.dev/${username}/feed`, {
       next: { revalidate: 3600 }, // 1時間ごとに再検証
@@ -18,11 +19,24 @@ export async function getZennArticles(username: string): Promise<ZennArticle[]> 
 
     const xml = await response.text()
     const articles = parseRSSFeed(xml)
+
+    // タグでフィルタ
+    if (tag) {
+      return articles.filter((article) =>
+        article.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
+      )
+    }
+
     return articles
   } catch (error) {
     console.error('Error fetching Zenn articles:', error)
     return []
   }
+}
+
+export async function getZennProductArticles(username: string, limit?: number): Promise<ZennArticle[]> {
+  const articles = await getZennArticles(username, 'product')
+  return limit ? articles.slice(0, limit) : articles
 }
 
 function parseRSSFeed(xml: string): ZennArticle[] {
@@ -45,6 +59,9 @@ function parseRSSFeed(xml: string): ZennArticle[] {
     const thumbnailMatch = item.match(/<media:thumbnail url="([^"]+)"/)
     const thumbnail = thumbnailMatch ? thumbnailMatch[1] : undefined
 
+    // タグ（カテゴリ）を抽出
+    const tags = extractCategories(item)
+
     if (title && link && pubDate) {
       articles.push({
         title: stripHTMLTags(decodeHTMLEntities(title)),
@@ -52,6 +69,7 @@ function parseRSSFeed(xml: string): ZennArticle[] {
         pubDate,
         description: stripHTMLTags(decodeHTMLEntities(description || '')),
         thumbnail,
+        tags,
       })
     }
   }
@@ -63,6 +81,20 @@ function extractTag(xml: string, tagName: string): string {
   const regex = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\/${tagName}>`, 'i')
   const match = xml.match(regex)
   return match ? match[1].trim() : ''
+}
+
+function extractCategories(xml: string): string[] {
+  const categoryRegex = /<category>(.*?)<\/category>/gi
+  const matches = xml.matchAll(categoryRegex)
+  const categories: string[] = []
+
+  for (const match of matches) {
+    if (match[1]) {
+      categories.push(stripHTMLTags(decodeHTMLEntities(match[1])))
+    }
+  }
+
+  return categories
 }
 
 function decodeHTMLEntities(text: string): string {

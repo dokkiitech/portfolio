@@ -1,4 +1,5 @@
 import { HeroSection } from "@/components/hero-section"
+import { LatestProducts } from "@/components/latest-products"
 import { Suspense, lazy } from "react"
 
 // 他のコンポーネントを遅延読み込み
@@ -30,6 +31,10 @@ export default function HomePage() {
       {/* 他のコンポーネントは遅延読み込み */}
       <Suspense fallback={<SectionSkeleton />}>
         <CodeAnimation />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton />}>
+        <LatestProducts />
       </Suspense>
     </main>
   )
