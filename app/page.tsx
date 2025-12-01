@@ -1,8 +1,8 @@
 import { HeroSection } from "@/components/hero-section"
+import { LatestProducts } from "@/components/latest-products"
 import { Suspense, lazy } from "react"
 
 // 他のコンポーネントを遅延読み込み
-const LatestProducts = lazy(() => import("@/components/latest-products").then(m => ({ default: m.LatestProducts })))
 const CodeAnimation = lazy(() => import("@/components/code-animation").then(m => ({ default: m.CodeAnimation })))
 
 // フォールバック用のローディングコンポーネント
